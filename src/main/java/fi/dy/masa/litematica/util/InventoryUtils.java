@@ -263,12 +263,13 @@ public class InventoryUtils
             }
             else
             {
-                int slot = inv.getSlotWithStack(stack);
+                int slot = getSlotWithStack(inv, stack);
                 boolean shouldPick = inv.getSelectedSlot() != slot;
 
                 if (shouldPick && slot != -1)
                 {
-                    setPickedItemToHand(stack, mc);
+                    ItemStack destinationStack = inv.getStack(slot);
+                    setPickedItemToHand(destinationStack, mc);
                 }
                 else if (slot == -1 && Configs.Generic.PICK_BLOCK_SHULKERS.getBooleanValue())
                 {
@@ -285,6 +286,17 @@ public class InventoryUtils
             }
         }
     }
+
+    private static int getSlotWithStack(PlayerInventory inv, ItemStack stack) {
+        List<ItemStack> main = inv.getMainStacks();
+        for (int i = 0; i < main.size(); ++i) {
+            if (!((ItemStack) main.get(i)).isEmpty() && fi.dy.masa.malilib.util.InventoryUtils.areStacksEqualIgnoreNbt(stack, main.get(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
     private static boolean canPickToSlot(PlayerInventory inventory, int slotNum)
     {
